@@ -1,3 +1,4 @@
+import Script from "next/script";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import "./globals.css";
@@ -60,7 +61,20 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
-     
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-VR3HJE41CZ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-VR3HJE41CZ');
+          `}
+        </Script>
+      </head>
       <body className="flex min-h-full flex-col">
         <Providers>
           <div className="aurora" aria-hidden />
