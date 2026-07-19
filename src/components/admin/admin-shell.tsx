@@ -3,14 +3,16 @@
 import { type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, FolderTree, Users, MessageSquare, PenLine, Home, Lock } from "lucide-react";
+import { LayoutDashboard, FileText, Inbox, FolderTree, Users, MessageSquare, PenLine, Home, Lock } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "./notification-bell";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/submissions", label: "Submissions", icon: Inbox },
   { href: "/admin/shayari", label: "Shayari", icon: FileText },
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
@@ -51,9 +53,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[220px_1fr]">
       <aside className="md:sticky md:top-20 md:self-start">
         <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <div className="mb-2 px-3 py-2">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted)]">Admin</p>
-            <p className="mt-1 truncate text-sm font-medium">{user.name}</p>
+          <div className="mb-2 flex items-center justify-between px-3 py-2">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted)]">Admin</p>
+              <p className="mt-1 truncate text-sm font-medium">{user.name}</p>
+            </div>
+            <NotificationBell />
           </div>
           <nav className="flex gap-1 overflow-x-auto md:flex-col">
             {items.map((item) => {

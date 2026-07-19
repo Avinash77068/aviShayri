@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Loader2, X, Send, Lock } from "lucide-react";
+import { ImagePlus, Loader2, X, Send, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { categoryQueries, languageQueries } from "@/lib/queries";
@@ -47,21 +47,18 @@ export function WriteShayariForm() {
   const [uploading, setUploading] = useState(false);
   const set = (k: keyof FormState, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const canWrite = user && (user.role === "admin" || user.role === "editor");
+  const isStaff = user && (user.role === "admin" || user.role === "editor");
 
   const upload = async (file: File) => {
     setUploading(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await api.post("/media/upload", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      const url = res.data?.data?.url as string;
-      set("featuredImage", url);
+      const res = await api.post("/media/upload", fd, { headers: { "Content-Type": "multipart/form-data" } });
+      set("featuredImage", res.data?.data?.url ?? "");
       toast.success("Image uploaded");
     } catch {
-      toast.error("Upload failed — need editor access & a valid image");
+      toast.error("Upload failed — please try a smaller image");
     } finally {
       setUploading(false);
     }
@@ -73,24 +70,25 @@ export function WriteShayariForm() {
         title: form.title.trim(),
         content: form.content.trim(),
         category: form.category,
-        status: form.status,
       };
+      if (isStaff) payload.status = form.status; // users are forced to pending server-side
       if (form.excerpt.trim()) payload.excerpt = form.excerpt.trim();
       if (form.language) payload.language = form.language;
       if (form.featuredImage) payload.featuredImage = form.featuredImage;
       const res = await api.post("/shayari", payload);
-      return res.data?.data as Shayari;
+      return { shayari: res.data?.data as Shayari, message: res.data?.message as string };
     },
-    onSuccess: (created) => {
-      toast.success("Shayari published!");
+    onSuccess: ({ shayari, message }) => {
       qc.invalidateQueries({ queryKey: ["shayari"] });
-      if (created?.slug) router.push(`/shayari/${created.slug}`);
-      else router.push("/shayari");
+      qc.invalidateQueries({ queryKey: ["admin"] });
+      toast.success(message || "Saved");
+      // Pending submissions aren't publicly viewable yet — send users home.
+      if (shayari?.status === "published" && shayari.slug) router.push(`/shayari/${shayari.slug}`);
+      else router.push(isStaff ? "/admin/shayari" : "/profile");
     },
     onError: (err: unknown) => {
       const e = err as { response?: { data?: { message?: string; errors?: { field: string; message: string }[] } } };
-      const msg = e.response?.data?.errors?.[0]?.message || e.response?.data?.message || "Could not publish";
-      toast.error(msg);
+      toast.error(e.response?.data?.errors?.[0]?.message || e.response?.data?.message || "Could not submit");
     },
   });
 
@@ -111,20 +109,14 @@ export function WriteShayariForm() {
     );
   }
 
-  if (!canWrite) {
+  if (!user) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl [background-image:var(--grad-soft)]">
-          <Lock className="h-7 w-7 text-[var(--primary)]" />
-        </span>
-        <h1 className="mt-6 text-2xl font-bold">Writing needs editor access</h1>
-        <p className="mt-3 text-[var(--muted)]">
-          {user
-            ? "Your account is a reader. Ask an admin to upgrade you to editor, or sign in with an editor/admin account."
-            : "Please sign in with an editor or admin account to publish shayari."}
-        </p>
-        <Link href={user ? "/" : "/login"} className="mt-8">
-          <Button size="lg">{user ? "Back home" : "Sign in"}</Button>
+        <span className="text-4xl">✍️</span>
+        <h1 className="mt-6 text-2xl font-bold">Sign in to write</h1>
+        <p className="mt-3 text-[var(--muted)]">Create an account to share your verses with the world.</p>
+        <Link href="/login" className="mt-8">
+          <Button size="lg">Sign in</Button>
         </Link>
       </div>
     );
@@ -137,7 +129,18 @@ export function WriteShayariForm() {
       </h1>
       <p className="mt-2 text-[var(--muted)]">Share a verse with the world. Add an image to make it shine.</p>
 
-      <form onSubmit={submit} className="mt-8 space-y-5">
+      {/* Review notice for non-staff */}
+      {!isStaff && (
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
+          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[var(--primary)]" />
+          <p className="text-sm text-[var(--muted)]">
+            Your shayari will be <span className="font-medium text-[var(--foreground)]">submitted for review</span>. An
+            admin will approve it before it goes live on the site.
+          </p>
+        </div>
+      )}
+
+      <form onSubmit={submit} className="mt-6 space-y-5">
         <div>
           <label className="mb-1.5 block text-sm font-medium">Title</label>
           <Input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Give it a title" maxLength={200} />
@@ -188,7 +191,9 @@ export function WriteShayariForm() {
 
         {/* Image upload */}
         <div>
-          <label className="mb-1.5 block text-sm font-medium">Featured image</label>
+          <label className="mb-1.5 block text-sm font-medium">
+            Featured image <span className="text-[var(--muted)]">(optional)</span>
+          </label>
           <input
             ref={fileRef}
             type="file"
@@ -225,13 +230,17 @@ export function WriteShayariForm() {
         </div>
 
         <div className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-5">
-          <Select value={form.status} onChange={(v) => set("status", v as FormState["status"])} className="max-w-40">
-            <option value="published">Publish now</option>
-            <option value="draft">Save as draft</option>
-          </Select>
+          {isStaff ? (
+            <Select value={form.status} onChange={(v) => set("status", v as FormState["status"])} className="max-w-40">
+              <option value="published">Publish now</option>
+              <option value="draft">Save as draft</option>
+            </Select>
+          ) : (
+            <span className="text-xs text-[var(--muted)]">Goes to review queue</span>
+          )}
           <Button type="submit" size="lg" disabled={mutation.isPending || uploading} className="gap-2">
             {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {form.status === "draft" ? "Save draft" : "Publish"}
+            {isStaff ? (form.status === "draft" ? "Save draft" : "Publish") : "Submit for review"}
           </Button>
         </div>
       </form>

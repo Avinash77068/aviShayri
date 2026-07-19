@@ -22,7 +22,6 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: user, isLoading: userLoading } = useCurrentUser();
-  const canWrite = user && (user.role === "admin" || user.role === "editor");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -73,7 +72,7 @@ export function SiteHeader() {
         </div>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
-          {canWrite && (
+          {user && (
             <Link href="/write" className="hidden sm:block">
               <Button size="sm" variant="outline" className="gap-1.5">
                 <PenLine className="h-4 w-4" /> Write

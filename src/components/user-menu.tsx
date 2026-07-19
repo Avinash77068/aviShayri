@@ -26,12 +26,8 @@ export function UserMenu({ user }: { user: User }) {
   const items = [
     { href: "/profile", label: "Profile", icon: UserIcon },
     { href: "/bookmarks", label: "Bookmarks", icon: Bookmark },
-    ...(isStaff
-      ? [
-          { href: "/write", label: "Write shayari", icon: PenLine },
-          { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-        ]
-      : []),
+    { href: "/write", label: "Write shayari", icon: PenLine },
+    ...(isStaff ? [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard }] : []),
   ];
 
   return (
