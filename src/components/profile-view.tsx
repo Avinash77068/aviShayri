@@ -60,10 +60,15 @@ export function ProfileView() {
       const fd = new FormData();
       fd.append("file", file);
       const res = await api.post("/media/upload", fd, { headers: { "Content-Type": "multipart/form-data" } });
-      setAvatar(res.data?.data?.url ?? "");
-      toast.success("Avatar uploaded — save to apply");
+      const url = res.data?.data?.url ?? "";
+      setAvatar(url);
+      // Persist immediately so the avatar survives a refresh — no separate
+      // "Save changes" click needed just for the photo.
+      await api.put("/auth/profile", { name: (name || user?.name || "").trim(), avatar: url });
+      await qc.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
+      toast.success("Avatar updated");
     } catch {
-      toast.error("Upload failed (needs editor/admin for media upload)");
+      toast.error("Upload failed — please try a smaller image");
     } finally {
       setUploading(false);
     }
