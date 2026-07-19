@@ -1,9 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { Sparkles, TrendingUp, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { SectionHeading } from "@/components/section-heading";
 import { QuerySection } from "@/components/query-section";
 import { CategoryStrip } from "@/components/category-strip";
 import { TodaysShayari } from "@/components/todays-shayari";
@@ -18,44 +14,34 @@ export default function HomePage() {
       </section>
 
       {/* Categories */}
-      <section className="py-12">
-        <SectionHeading
-          eyebrow="Browse by mood"
-          title="Categories"
-          href="/categories"
-        />
-        <CategoryStrip />
-      </section>
+      <CategoryStrip />
 
       {/* Trending */}
-      <section className="py-12">
-        <SectionHeading
-          eyebrow="Most loved right now"
-          title="Trending Shayari"
-          href="/trending"
-        />
-        <QuerySection kind="trending" limit={6} />
-      </section>
+      <QuerySection
+        kind="trending"
+        limit={6}
+        eyebrow="Most loved right now"
+        title="Trending Shayari"
+        href="/trending"
+      />
 
       {/* Featured */}
-      <section className="py-12">
-        <SectionHeading
-          eyebrow="Handpicked"
-          title="Editor's Picks"
-          href="/shayari"
-        />
-        <QuerySection kind="featured" limit={3} />
-      </section>
+      <QuerySection
+        kind="featured"
+        limit={3}
+        eyebrow="Handpicked"
+        title="Editor's Picks"
+        href="/shayari"
+      />
 
       {/* Latest */}
-      <section className="py-12">
-        <SectionHeading
-          eyebrow="Fresh off the press"
-          title="Latest Verses"
-          href="/shayari"
-        />
-        <QuerySection kind="latest" limit={6} />
-      </section>
+      <QuerySection
+        kind="latest"
+        limit={6}
+        eyebrow="Fresh off the press"
+        title="Latest Verses"
+        href="/shayari"
+      />
     </div>
   );
 }

@@ -3,14 +3,24 @@
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { SectionHeading } from "./section-heading";
 import { categoryQueries } from "@/lib/queries";
 import { formatCount } from "@/lib/utils";
 
 export function CategoryStrip() {
-  const { data: categories } = useQuery(categoryQueries.all());
+  const { data: categories, isLoading } = useQuery(categoryQueries.all());
+
+  // Hide the whole section (heading included) when there are no categories.
+  if (!isLoading && (!categories || categories.length === 0)) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+    <section className="py-6">
+      <SectionHeading
+        eyebrow="Browse by mood"
+        title="Categories"
+        href="/categories"
+      />
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
       {(categories ?? []).map((c, i) => (
         <motion.div
           key={c._id}
@@ -34,6 +44,7 @@ export function CategoryStrip() {
           </Link>
         </motion.div>
       ))}
-    </div>
+      </div>
+    </section>
   );
 }

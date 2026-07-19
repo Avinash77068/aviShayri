@@ -123,7 +123,7 @@ export function WriteShayariForm() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
+    <div className="mx-auto max-w-2xl px-4 pt-10">
       <h1 className="text-3xl font-extrabold tracking-tight">
         Write a <span className="text-gradient">Shayari</span>
       </h1>

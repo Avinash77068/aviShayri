@@ -49,7 +49,7 @@ export function UserMenu({ user }: { user: User }) {
       </button>
 
       {open && (
-        <div className="glass absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl p-2 shadow-xl">
+        <div className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl dark:border-gray-700 dark:bg-[var(--surface)]">
           <div className="border-b border-[var(--border)] px-3 py-2.5">
             <p className="truncate text-sm font-semibold">{user.name}</p>
             <p className="truncate text-xs text-[var(--muted)]">{user.email}</p>
