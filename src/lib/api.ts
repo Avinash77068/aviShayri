@@ -7,18 +7,36 @@ import type { ApiEnvelope } from "./types";
  */
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 const AUTH_TOKEN_STORAGE_KEY = "auth_access_token";
+const AUTH_TOKEN_COOKIE_NAME = "auth_access_token";
+
+function readCookie(name: string) {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function writeCookie(name: string, value: string | null) {
+  if (typeof document === "undefined") return;
+  if (value) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=604800; SameSite=Lax`;
+  } else {
+    document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`;
+  }
+}
 
 export function getStoredAuthToken() {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) || readCookie(AUTH_TOKEN_COOKIE_NAME);
 }
 
 export function setAuthToken(token: string | null) {
   if (typeof window === "undefined") return;
   if (token) {
     window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+    writeCookie(AUTH_TOKEN_COOKIE_NAME, token);
   } else {
     window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    writeCookie(AUTH_TOKEN_COOKIE_NAME, null);
   }
 }
 
