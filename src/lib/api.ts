@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosHeaders } from "axios";
 import type { ApiEnvelope } from "./types";
 
 /**
@@ -36,10 +36,8 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = getStoredAuthToken();
   if (token) {
-    config.headers = {
-      ...(config.headers ?? {}),
-      Authorization: `Bearer ${token}`,
-    };
+    config.headers = new AxiosHeaders(config.headers);
+    config.headers.set("Authorization", `Bearer ${token}`);
   }
   return config;
 });
