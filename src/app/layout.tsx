@@ -4,7 +4,6 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -27,29 +26,41 @@ export const metadata: Metadata = {
   },
   description:
     "Discover the finest shayari, poetry and verses across languages — love, sad, motivational and more. Read, bookmark, and share what moves you.",
-  keywords: ["shayari", "poetry", "urdu shayari", "hindi shayari", "love shayari", "sad shayari"],
+  keywords: [
+    "shayari",
+    "poetry",
+    "urdu shayari",
+    "hindi shayari",
+    "love shayari",
+    "sad shayari",
+  ],
   openGraph: {
     type: "website",
     siteName: "Shayari",
     title: "Shayari — where words find their rhythm",
-    description: "Discover the finest shayari, poetry and verses across languages.",
+    description:
+      "Discover the finest shayari, poetry and verses across languages.",
     url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
     title: "Shayari — where words find their rhythm",
-    description: "Discover the finest shayari, poetry and verses across languages.",
+    description:
+      "Discover the finest shayari, poetry and verses across languages.",
   },
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
       suppressHydrationWarning
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
+     
       <body className="flex min-h-full flex-col">
         <Providers>
           <div className="aurora" aria-hidden />
