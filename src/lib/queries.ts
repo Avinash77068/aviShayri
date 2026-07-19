@@ -1,5 +1,5 @@
 import { api, unwrap } from "./api";
-import type { Shayari, Category, PageMeta } from "./types";
+import type { Shayari, Category, Language, PageMeta } from "./types";
 import { sampleShayari, sampleCategories } from "./sample-data";
 
 /**
@@ -64,9 +64,15 @@ export const shayariQueries = {
   todays: () => ({
     queryKey: ["shayari", "todays"] as const,
     queryFn: (): Promise<Shayari | null> =>
-      withFallback(
-        async () => (await unwrap<Shayari>(api.get("/shayari/todays"))).data,
-        sampleShayari[0]
+      withFallback<Shayari | null>(
+        async () => {
+          // Backend omits `data` entirely when there is no pick (empty DB),
+          // so coerce undefined → a sample so the card still renders and the
+          // query never resolves to `undefined` (which TanStack forbids).
+          const { data } = await unwrap<Shayari>(api.get("/shayari/todays"));
+          return data ?? sampleShayari[0] ?? null;
+        },
+        sampleShayari[0] ?? null
       ),
   }),
 
@@ -100,6 +106,14 @@ export const categoryQueries = {
     queryKey: ["categories", "all"] as const,
     queryFn: (): Promise<Category[]> =>
       withFallback(async () => (await unwrap<Category[]>(api.get("/categories/all"))).data, sampleCategories),
+  }),
+};
+
+export const languageQueries = {
+  all: () => ({
+    queryKey: ["languages", "all"] as const,
+    queryFn: (): Promise<Language[]> =>
+      withFallback<Language[]>(async () => (await unwrap<Language[]>(api.get("/languages"))).data ?? [], []),
   }),
 };
 

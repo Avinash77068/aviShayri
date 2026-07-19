@@ -8,7 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Feather, Loader2, Mail, Lock, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { AUTH_QUERY_KEY } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -33,6 +35,7 @@ type FormValues = { name?: string; email: string; password: string };
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
+  const qc = useQueryClient();
   const [serverError, setServerError] = useState("");
   const schema = mode === "login" ? loginSchema : registerSchema;
 
@@ -48,7 +51,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const onSubmit = handleSubmit(async (values) => {
     setServerError("");
     try {
-      await api.post(`/auth/${mode}`, values);
+      const res = await api.post(`/auth/${mode}`, values);
+      // Prime the header's user state immediately, then refetch to be safe.
+      qc.setQueryData(AUTH_QUERY_KEY, res.data?.data?.user ?? null);
+      await qc.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
       toast.success(mode === "login" ? "Welcome back!" : "Account created!");
       router.push("/");
       router.refresh();

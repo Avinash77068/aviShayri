@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Feather, Menu, X, TrendingUp, Grid3x3, Sparkles } from "lucide-react";
+import { Feather, Menu, X, TrendingUp, Grid3x3, Sparkles, PenLine } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { SearchBar } from "./search-bar";
 import { Button } from "./ui/button";
+import { UserMenu } from "./user-menu";
+import { useCurrentUser } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -19,6 +21,8 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: user, isLoading: userLoading } = useCurrentUser();
+  const canWrite = user && (user.role === "admin" || user.role === "editor");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -69,12 +73,25 @@ export function SiteHeader() {
         </div>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
+          {canWrite && (
+            <Link href="/write" className="hidden sm:block">
+              <Button size="sm" variant="outline" className="gap-1.5">
+                <PenLine className="h-4 w-4" /> Write
+              </Button>
+            </Link>
+          )}
           <ThemeToggle />
-          <Link href="/login" className="hidden sm:block">
-            <Button size="sm" variant="primary">
-              Sign in
-            </Button>
-          </Link>
+          {userLoading ? (
+            <span className="h-9 w-9 rounded-full skeleton" />
+          ) : user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Link href="/login" className="hidden sm:block">
+              <Button size="sm" variant="primary">
+                Sign in
+              </Button>
+            </Link>
+          )}
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] md:hidden"
             onClick={() => setMobileOpen((v) => !v)}
@@ -99,11 +116,24 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/login" className="mt-2">
-              <Button className="w-full" size="sm">
-                Sign in
-              </Button>
-            </Link>
+            {!user && (
+              <Link href="/login" className="mt-2">
+                <Button className="w-full" size="sm">
+                  Sign in
+                </Button>
+              </Link>
+            )}
+            {user && (
+              <div className="mt-2 flex items-center gap-3 rounded-xl border border-[var(--border)] px-3 py-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold text-white [background-image:var(--grad-1)]">
+                  {(user.name || "U").charAt(0).toUpperCase()}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{user.name}</p>
+                  <p className="truncate text-xs text-[var(--muted)]">{user.email}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
