@@ -1,65 +1,73 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Sparkles, TrendingUp, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SectionHeading } from "@/components/section-heading";
+import { QuerySection } from "@/components/query-section";
+import { CategoryStrip } from "@/components/category-strip";
+import { TodaysShayari } from "@/components/todays-shayari";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="mx-auto max-w-6xl px-4">
+      {/* Hero */}
+      <section className="relative py-16 text-center sm:py-24">
+        <div className="mx-auto max-w-3xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-1.5 text-xs font-medium text-[var(--muted)]">
+            <Sparkles className="h-3.5 w-3.5 text-[var(--gold)]" />
+            Thousands of verses across languages
+          </span>
+          <h1 className="mt-6 text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-6xl">
+            Where words find
+            <br />
+            their <span className="text-gradient">rhythm</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto mt-6 max-w-xl text-lg text-[var(--muted)]">
+            A curated home for shayari, poetry and verses that speak the language of the heart. Read, feel, bookmark and
+            share what moves you.
           </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <Link href="/trending">
+              <Button size="lg" className="gap-2">
+                <TrendingUp className="h-4 w-4" /> Explore Trending
+              </Button>
+            </Link>
+            <Link href="/categories">
+              <Button size="lg" variant="outline" className="gap-2">
+                Browse Categories <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
+
+      {/* Today's pick */}
+      <section className="py-8">
+        <TodaysShayari />
+      </section>
+
+      {/* Categories */}
+      <section className="py-12">
+        <SectionHeading eyebrow="Browse by mood" title="Categories" href="/categories" />
+        <CategoryStrip />
+      </section>
+
+      {/* Trending */}
+      <section className="py-12">
+        <SectionHeading eyebrow="Most loved right now" title="Trending Shayari" href="/trending" />
+        <QuerySection kind="trending" limit={6} />
+      </section>
+
+      {/* Featured */}
+      <section className="py-12">
+        <SectionHeading eyebrow="Handpicked" title="Editor's Picks" href="/shayari" />
+        <QuerySection kind="featured" limit={3} />
+      </section>
+
+      {/* Latest */}
+      <section className="py-12">
+        <SectionHeading eyebrow="Fresh off the press" title="Latest Verses" href="/shayari" />
+        <QuerySection kind="latest" limit={6} />
+      </section>
     </div>
   );
 }
