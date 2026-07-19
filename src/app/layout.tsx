@@ -4,6 +4,8 @@ import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
+import { PromoStrip } from "@/components/promo-strip";
+import { MobileBottomBar } from "@/components/mobile-bottom-bar";
 import { SiteFooter } from "@/components/site-footer";
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -79,8 +81,10 @@ export default function RootLayout({
         <Providers>
           <div className="aurora" aria-hidden />
           <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <PromoStrip />
+          <main className="flex-1 pb-20 md:pb-0">{children}</main>
           <SiteFooter />
+          <MobileBottomBar />
         </Providers>
       </body>
     </html>

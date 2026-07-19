@@ -63,7 +63,7 @@ export function ShayariDetail({ slug }: { slug: string }) {
   };
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-10">
+    <article className="mx-auto max-w-3xl px-4 pt-10">
       <Link
         href="/shayari"
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
