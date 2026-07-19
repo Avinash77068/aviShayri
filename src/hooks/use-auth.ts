@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { api, clearAuthToken } from "@/lib/api";
 import type { User } from "@/lib/types";
 
 export const AUTH_QUERY_KEY = ["auth", "me"] as const;
@@ -38,6 +38,7 @@ export function useLogout() {
     } catch {
       /* clear client state regardless */
     }
+    clearAuthToken();
     qc.setQueryData(AUTH_QUERY_KEY, null);
     toast.success("Signed out");
     router.push("/");

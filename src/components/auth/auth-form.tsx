@@ -9,7 +9,7 @@ import { z } from "zod";
 import { Feather, Loader2, Mail, Lock, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, setAuthToken } from "@/lib/api";
 import { AUTH_QUERY_KEY } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +52,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
     setServerError("");
     try {
       const res = await api.post(`/auth/${mode}`, values);
+      const accessToken = res.data?.data?.accessToken ?? null;
+      setAuthToken(accessToken);
       // Prime the header's user state immediately, then refetch to be safe.
       qc.setQueryData(AUTH_QUERY_KEY, res.data?.data?.user ?? null);
       await qc.invalidateQueries({ queryKey: AUTH_QUERY_KEY });

@@ -6,12 +6,42 @@ import type { ApiEnvelope } from "./types";
  * HTTP-only auth cookies set by the backend.
  */
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const AUTH_TOKEN_STORAGE_KEY = "auth_access_token";
+
+export function getStoredAuthToken() {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+}
+
+export function setAuthToken(token: string | null) {
+  if (typeof window === "undefined") return;
+  if (token) {
+    window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+  } else {
+    window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+  }
+}
+
+export function clearAuthToken() {
+  setAuthToken(null);
+}
 
 export const api = axios.create({
   baseURL: API_BASE,
   withCredentials: true,
   timeout: 12000,
   headers: { Accept: "application/json" },
+});
+
+api.interceptors.request.use((config) => {
+  const token = getStoredAuthToken();
+  if (token) {
+    config.headers = {
+      ...(config.headers ?? {}),
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return config;
 });
 
 // Attempt a silent refresh once on 401, then retry the original request.
