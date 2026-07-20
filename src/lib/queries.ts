@@ -20,6 +20,14 @@ export interface ListResult {
   meta?: PageMeta;
 }
 
+/** Milliseconds from now until the next local midnight (min 1 minute). */
+function msUntilMidnight(): number {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return Math.max(midnight.getTime() - now.getTime(), 60_000);
+}
+
 export const shayariQueries = {
   list: (params: Record<string, unknown> = {}) => ({
     queryKey: ["shayari", "list", params] as const,
@@ -74,6 +82,12 @@ export const shayariQueries = {
         },
         sampleShayari[0] ?? null
       ),
+    // Today's pick only changes once a day → keep it fresh until the next
+    // local midnight so we don't refetch on every mount/navigation.
+    staleTime: msUntilMidnight(),
+    gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   }),
 
   bySlug: (slug: string) => ({
