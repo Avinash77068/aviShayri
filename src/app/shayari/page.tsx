@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { ShayariList } from "@/components/shayari-list";
+import { buildKeywords } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "All Shayari",
-  description: "Browse the complete collection of shayari, poetry and verses.",
+  description:
+    "Browse the complete collection of shayari — love, sad, attitude, romantic and motivational verses in Hindi, Urdu and English.",
+  keywords: buildKeywords(["all shayari", "latest shayari", "shayari collection"]),
+  alternates: { canonical: "/shayari" },
 };
 
 export default function ShayariIndexPage() {

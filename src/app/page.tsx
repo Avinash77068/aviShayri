@@ -1,8 +1,13 @@
-"use client";
-
+import type { Metadata } from "next";
 import { QuerySection } from "@/components/query-section";
 import { CategoryStrip } from "@/components/category-strip";
 import { TodaysShayari } from "@/components/todays-shayari";
+import { DEFAULT_DESCRIPTION } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  description: DEFAULT_DESCRIPTION,
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   return (

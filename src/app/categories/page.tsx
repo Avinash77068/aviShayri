@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CategoryStrip } from "@/components/category-strip";
+import { buildKeywords } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Categories",
   description: "Browse shayari by mood and theme — love, sad, motivational, life and more.",
+  keywords: buildKeywords(["shayari categories", "shayari by mood", "shayari topics"]),
+  alternates: { canonical: "/categories" },
 };
 
 export default function CategoriesPage() {
