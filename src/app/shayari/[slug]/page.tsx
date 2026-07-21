@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!s) return { title: "Shayari not found", robots: { index: false, follow: true } };
 
   const description = s.seoDescription || s.excerpt || s.content.slice(0, 160);
-  const authorName = s.author?.name;
+  const author = s.author?.name || s.createdBy?.name;
   const tagNames = s.tags?.map((t) => t.name) ?? [];
   const categoryKeyword = s.category?.name ? `${s.category.name.toLowerCase()} shayari` : undefined;
 
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       publishedTime: s.publishedAt || s.createdAt,
       section: s.category?.name,
       tags: tagNames,
-      authors: authorName ? [authorName] : undefined,
+      authors: author ? [author] : undefined,
       images: s.featuredImage ? [{ url: s.featuredImage }] : undefined,
     },
     twitter: { card: "summary_large_image", title: s.title, description },
@@ -67,7 +67,7 @@ export default async function ShayariDetailPage({ params }: { params: Params }) 
             headline: s.title,
             text: s.content,
             inLanguage: s.language?.code ?? "hi",
-            author: { "@type": "Person", name: s.author?.name ?? "Unknown" },
+            author: { "@type": "Person", name: s.author?.name || s.createdBy?.name || "Unknown" },
             genre: s.category?.name,
             keywords: (s.seoKeywords ?? s.tags?.map((t) => t.name) ?? []).join(", ") || undefined,
             datePublished: s.publishedAt || s.createdAt,

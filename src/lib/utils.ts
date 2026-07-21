@@ -1,9 +1,18 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { Shayari } from "./types";
 
 /** Merge conditional class names and de-duplicate Tailwind utilities. */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Display name for a shayari: the dedicated poet/author if one is set,
+ * otherwise the user who submitted it, and finally a safe fallback.
+ */
+export function authorName(shayari: Pick<Shayari, "author" | "createdBy">): string {
+  return shayari.author?.name || shayari.createdBy?.name || "Unknown";
 }
 
 /** Format a large number compactly: 1200 → "1.2K". */

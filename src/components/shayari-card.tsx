@@ -7,7 +7,7 @@ import { Heart, Bookmark, Share2, Copy, Eye, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import { api } from "@/lib/api";
-import { cn, formatCount } from "@/lib/utils";
+import { cn, formatCount, authorName } from "@/lib/utils";
 import type { Shayari } from "@/lib/types";
 
 export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: number }) {
@@ -34,7 +34,7 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(`${shayari.content}\n\n— ${shayari.author?.name ?? "Unknown"}`);
+      await navigator.clipboard.writeText(`${shayari.content}\n\n— ${authorName(shayari)}`);
       setCopied(true);
       toast.success("Copied to clipboard");
       setTimeout(() => setCopied(false), 1600);
@@ -84,9 +84,9 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
       <div className="mt-5 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
           <span className="flex h-7 w-7 items-center justify-center rounded-full [background-image:var(--grad-soft)] text-xs font-semibold text-[var(--primary)]">
-            {(shayari.author?.name ?? "A").charAt(0)}
+            {authorName(shayari).charAt(0)}
           </span>
-          <span className="font-medium text-[var(--foreground)]">{shayari.author?.name ?? "Unknown"}</span>
+          <span className="font-medium text-[var(--foreground)]">{authorName(shayari)}</span>
         </div>
         <span className="flex items-center gap-1 text-xs text-[var(--muted)]">
           <Eye className="h-3.5 w-3.5" /> {formatCount(shayari.views)}

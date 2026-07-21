@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ShayariGrid } from "@/components/shayari-grid";
 import { SectionHeading } from "@/components/section-heading";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn, formatCount } from "@/lib/utils";
+import { cn, formatCount, authorName } from "@/lib/utils";
 
 export function ShayariDetail({ slug }: { slug: string }) {
   const { data, isLoading } = useQuery(shayariQueries.bySlug(slug));
@@ -41,7 +41,7 @@ export function ShayariDetail({ slug }: { slug: string }) {
   };
 
   const copy = async () => {
-    await navigator.clipboard.writeText(`${s.content}\n\n— ${s.author?.name ?? "Unknown"}`);
+    await navigator.clipboard.writeText(`${s.content}\n\n— ${authorName(s)}`);
     setCopied(true);
     toast.success("Copied to clipboard");
     setTimeout(() => setCopied(false), 1600);
@@ -87,9 +87,9 @@ export function ShayariDetail({ slug }: { slug: string }) {
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[var(--muted)]">
         <span className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full [background-image:var(--grad-soft)] text-xs font-semibold text-[var(--primary)]">
-            {(s.author?.name ?? "A").charAt(0)}
+            {authorName(s).charAt(0)}
           </span>
-          <span className="font-medium text-[var(--foreground)]">{s.author?.name ?? "Unknown"}</span>
+          <span className="font-medium text-[var(--foreground)]">{authorName(s)}</span>
         </span>
         <span className="flex items-center gap-1">
           <Eye className="h-4 w-4" /> {formatCount(s.views)} views

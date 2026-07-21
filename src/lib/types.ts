@@ -41,6 +41,7 @@ export interface Shayari {
   category?: Category;
   tags?: Tag[];
   author?: Author;
+  createdBy?: Pick<User, "_id" | "name" | "avatar">;
   language?: Language;
   featuredImage?: string;
   featured?: boolean;
