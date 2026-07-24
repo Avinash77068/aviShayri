@@ -13,7 +13,7 @@ export function ShayariGrid({
 }) {
   if (loading) {
     return (
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 ">
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <ShayariCardSkeleton key={i} />
         ))}
@@ -31,7 +31,7 @@ export function ShayariGrid({
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 ">
       {items.map((s, i) => (
         <ShayariCard key={s._id} shayari={s} index={i} />
       ))}
