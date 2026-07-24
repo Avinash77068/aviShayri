@@ -25,10 +25,10 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
     setFlag(!flag);
     onCount?.(!flag ? 1 : -1);
     api.post(endpoint).catch(() => {
-      // Revert on failure (e.g. not logged in).
+      // Revert on failure — works signed-in or anonymous, so this is a real error.
       setFlag(flag);
       onCount?.(!flag ? -1 : 1);
-      toast.error("Please sign in to do that");
+      toast.error("Something went wrong, please try again");
     });
   };
 

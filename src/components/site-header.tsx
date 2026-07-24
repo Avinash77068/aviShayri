@@ -9,6 +9,7 @@ import {
   Grid3x3,
   Sparkles,
   PenLine,
+  Bookmark,
 } from "lucide-react";
 
 import { ThemeToggle } from "./theme-toggle";
@@ -95,6 +96,18 @@ export function SiteHeader() {
               </Button>
             </Link>
           )}
+
+          {/* Favourites work signed-in or anonymous, so this is always shown. */}
+          <Link
+            href="/bookmarks"
+            aria-label="Bookmarks"
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] transition-colors hover:bg-[var(--surface-2)]",
+              pathname === "/bookmarks" && "text-[var(--primary)]"
+            )}
+          >
+            <Bookmark className="h-5 w-5" />
+          </Link>
 
           <ThemeToggle />
 
