@@ -4,8 +4,8 @@ import { SITE_URL } from "@/lib/seo";
 import { sampleCategories } from "@/lib/sample-data";
 import type { Shayari, Category } from "@/lib/types";
 
-// Regenerate the sitemap at most once an hour rather than on every crawl.
-export const revalidate = 3600;
+// Regenerate the sitemap at most once every 10 minutes rather than on every crawl.
+export const revalidate = 600;
 
 const url = (path: string) => new URL(path, SITE_URL).toString();
 
