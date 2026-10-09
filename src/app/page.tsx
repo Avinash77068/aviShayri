@@ -29,7 +29,7 @@ export default function HomePage() {
 
           <div className="mt-8 max-w-xl">
             <SearchBar className="max-w-none" prominent />
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
+            <div className="mt-3 flex flex-wrap  items-center gap-2 text-xs text-[var(--muted)]">
               <span className="mr-1">Try a mood</span>
               {[
                 ["Love", "love"],

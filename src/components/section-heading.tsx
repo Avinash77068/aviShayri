@@ -4,11 +4,13 @@ import { ArrowRight } from "lucide-react";
 export function SectionHeading({
   eyebrow,
   title,
+  description,
   href,
   hrefLabel = "View all",
 }: {
   eyebrow?: string;
   title: string;
+  description?: string;
   href?: string;
   hrefLabel?: string;
 }) {
@@ -21,6 +23,7 @@ export function SectionHeading({
           </span>
         )}
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
+        {description && <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--muted)]">{description}</p>}
       </div>
       {href && (
         <Link

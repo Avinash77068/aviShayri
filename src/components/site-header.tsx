@@ -5,9 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Feather,
-  TrendingUp,
-  Grid3x3,
-  Sparkles,
   PenLine,
   Bookmark,
   Search,
@@ -21,9 +18,10 @@ import { useCurrentUser } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Home", icon: Sparkles },
-  { href: "/trending", label: "Trending", icon: TrendingUp },
-  { href: "/categories", label: "Categories", icon: Grid3x3 },
+  { href: "/", label: "Home" },
+  { href: "/shayari", label: "Latest" },
+  { href: "/trending", label: "Trending" },
+  { href: "/categories", label: "Categories" },
 ];
 
 export function SiteHeader() {
@@ -48,7 +46,7 @@ export function SiteHeader() {
         scrolled ? "glass shadow-sm" : "bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl justify-between sm:items-center gap-3 px-4 sm:px-6 xl:gap-4">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl [background-image:var(--grad-1)] shadow-md">
@@ -61,9 +59,11 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav aria-label="Primary" className="ml-2 hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="ml-1 hidden items-center gap-0 lg:flex xl:gap-1">
           {NAV.map((item) => {
-            const active = pathname === item.href;
+            const active = item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href) || (item.href === "/categories" && pathname.startsWith("/category/"));
 
             return (
               <Link
@@ -71,7 +71,7 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "rounded-full px-2.5 py-2 text-sm font-medium transition-colors xl:px-4",
                   active
                     ? "bg-[var(--surface-2)] text-[var(--foreground)]"
                     : "text-[var(--muted)] hover:text-[var(--foreground)]",
@@ -84,7 +84,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Search */}
-        <div className="ml-auto hidden w-full max-w-[19rem] flex-1 lg:block">
+        <div className="ml-auto hidden w-full max-w-[15rem] flex-1 lg:block xl:max-w-[19rem]">
           <SearchBar />
         </div>
 

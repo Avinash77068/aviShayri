@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { SectionHeading } from "./section-heading";
 import { categoryQueries } from "@/lib/queries";
 import { formatCount } from "@/lib/utils";
@@ -17,9 +18,11 @@ export function CategoryStrip() {
   return (
     <section className="py-6">
       <SectionHeading
-        eyebrow="Start with a feeling"
-        title="Find your mood"
+        eyebrow="Browse by mood"
+        title="What’s on your heart?"
+        description="Choose a feeling and find a verse that meets you there."
         href="/categories"
+        hrefLabel="All moods"
       />
       {isLoading ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
@@ -40,7 +43,7 @@ export function CategoryStrip() {
               <Link
                 href={`/category/${c.slug}`}
                 aria-label={`Browse ${c.name} shayari, ${formatCount(c.shayariCount)} verses`}
-                className="card-hover flex min-h-36 flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-center sm:p-5"
+                className="card-hover group relative flex min-h-36 flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-center sm:p-5"
               >
                 <span
                   className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
@@ -50,6 +53,9 @@ export function CategoryStrip() {
                 </span>
                 <span className="text-sm font-semibold">{c.name}</span>
                 <span className="text-xs text-[var(--muted)]">{formatCount(c.shayariCount)} verses</span>
+                <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--surface-2)] text-[var(--muted)] transition-colors group-hover:text-[var(--primary)]">
+                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                </span>
               </Link>
             </motion.div>
           ))}

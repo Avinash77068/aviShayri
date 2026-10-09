@@ -9,6 +9,7 @@ import {
   PenLine,
   User as UserIcon,
   LogIn,
+  Clock,
 } from "lucide-react";
 
 import { useCurrentUser } from "@/hooks/use-auth";
@@ -16,6 +17,7 @@ import { cn } from "@/lib/utils";
 
 const TABS = [
   { href: "/", label: "Home", icon: Sparkles },
+  { href: "/shayari", label: "Latest", icon: Clock },
   { href: "/trending", label: "Trending", icon: TrendingUp },
   { href: "/categories", label: "Categories", icon: Grid3x3 },
 ];
@@ -25,11 +27,13 @@ export function MobileBottomBar() {
   const { data: user } = useCurrentUser();
 
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    href === "/"
+      ? pathname === "/"
+      : pathname.startsWith(href) || (href === "/categories" && pathname.startsWith("/category/"));
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] glass pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] glass pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Primary"
     >
       <div className="mx-auto flex max-w-md items-center justify-around px-2">

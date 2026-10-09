@@ -145,7 +145,7 @@ export default function RootLayout({
           <div className="aurora" aria-hidden />
           <SiteHeader />
           <PromoStrip />
-          <main id="main-content" tabIndex={-1} className="flex-1 pb-20 outline-none md:pb-0">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 pb-24 outline-none lg:pb-0">{children}</main>
           <SiteFooter />
           <MobileBottomBar />
         </Providers>
