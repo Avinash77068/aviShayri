@@ -136,10 +136,16 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-full flex-col">
         <Providers>
+          <a
+            href="#main-content"
+            className="sr-only left-4 top-4 z-[100] rounded-full bg-[var(--foreground)] px-4 py-3 text-sm font-semibold text-[var(--background)] focus:not-sr-only focus:fixed"
+          >
+            Skip to content
+          </a>
           <div className="aurora" aria-hidden />
           <SiteHeader />
           <PromoStrip />
-          <main className="flex-1 pb-20 md:pb-0">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 pb-20 outline-none md:pb-0">{children}</main>
           <SiteFooter />
           <MobileBottomBar />
         </Providers>

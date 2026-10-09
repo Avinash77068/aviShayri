@@ -1,56 +1,24 @@
-"use client";
-
-import { PenLine, Sparkles, Coins } from "lucide-react";
-
-const ITEMS = [
-  { icon: PenLine, text: "Ek din mein 50 shayari post kar sakte ho" },
-  { icon: Coins, text: "Har shayari par milenge 10 credits" },
-  { icon: Sparkles, text: "Jitna likho, utna kamao — apni awaaz ko shohrat do" },
-];
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export function PromoStrip() {
-  // Duplicate the sequence so the marquee loops seamlessly.
-  const loop = [...ITEMS, ...ITEMS];
-
   return (
-    <div className="sticky top-16 z-30 overflow-hidden border-b border-[var(--border)] [background-image:var(--grad-1)] text-white">
-      <div className="marquee flex w-max items-center gap-10 py-2">
-        {loop.map((item, i) => {
-          const Icon = item.icon;
-          return (
-            <span
-              key={i}
-              className="flex shrink-0 items-center gap-2 text-sm font-medium"
-            >
-              <Icon className="h-4 w-4" />
-              {item.text}
-              <span className="mx-2 opacity-60">•</span>
-            </span>
-          );
-        })}
+    <div className="sticky top-16 z-30 border-b border-[var(--border)] [background-image:var(--grad-1)] text-white">
+      <div className="mx-auto flex min-h-10 max-w-7xl items-center justify-center gap-2 px-4 py-2 text-center text-xs sm:text-sm">
+        <Sparkles className="hidden h-4 w-4 shrink-0 sm:block" aria-hidden="true" />
+        <p className="whitespace-nowrap font-medium">
+          <span className="sm:hidden">Earn 10 credits per shayari.</span>
+          <span className="hidden sm:inline">Share your words and earn 10 credits for every published shayari.</span>
+        </p>
+        <Link
+          href="/write"
+          className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 font-semibold transition-colors hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <span className="sm:hidden">Write</span>
+          <span className="hidden sm:inline">Start writing</span>
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
       </div>
-
-      <style jsx>{`
-        .marquee {
-          animation: promo-scroll 25s linear infinite;
-        }
-        .marquee:hover {
-          animation-play-state: paused;
-        }
-        @keyframes promo-scroll {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .marquee {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -74,6 +74,7 @@ function Tab({
   return (
     <Link
       href={href}
+      aria-current={active ? "page" : undefined}
       className={cn(
         "flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors",
         active

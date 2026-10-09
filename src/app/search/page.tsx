@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { SearchResults } from "@/components/search-results";
+import { SearchBar } from "@/components/search-bar";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -15,6 +16,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   return (
     <>
       <PageHero emoji="🔍" title="Search" subtitle="Find the verse that speaks to you." />
+      <div className="mx-auto -mt-2 max-w-3xl px-4 pb-8">
+        <SearchBar prominent initialQuery={q.trim()} />
+        <p className="mt-3 text-center text-xs text-[var(--muted)]">Search by a feeling, a phrase, or a poet&apos;s name.</p>
+      </div>
       <div className="mx-auto max-w-6xl px-4 pb-16">
         <SearchResults q={q.trim()} />
       </div>

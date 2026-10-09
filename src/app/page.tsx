@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { QuerySection } from "@/components/query-section";
 import { CategoryStrip } from "@/components/category-strip";
 import { TodaysShayari } from "@/components/todays-shayari";
+import { SearchBar } from "@/components/search-bar";
 import { DEFAULT_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -11,14 +13,54 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl px-4">
-      
-      {/* Today's pick */}
-      <section className="py-8">
-        <TodaysShayari />
+    <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[1.02fr_.98fr] lg:gap-14 lg:py-16">
+        <div className="max-w-2xl">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--primary)] shadow-sm">
+            <span className="h-1.5 w-1.5 rounded-full [background-image:var(--grad-1)]" />
+            A verse for every feeling
+          </span>
+          <h1 className="max-w-[12ch] text-5xl font-semibold leading-[1.02] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
+            Find the words your <span className="font-[var(--font-serif)] font-medium italic text-gradient">heart</span> is looking for.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-[var(--muted)] sm:text-lg sm:leading-8">
+            Explore shayari for love, longing, friendship and all the feelings in between. Save the lines that feel like yours.
+          </p>
+
+          <div className="mt-8 max-w-xl">
+            <SearchBar className="max-w-none" prominent />
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
+              <span className="mr-1">Try a mood</span>
+              {[
+                ["Love", "love"],
+                ["Heartbreak", "sad"],
+                ["Life", "life"],
+                ["Motivation", "motivational"],
+              ].map(([label, slug]) => (
+                <Link
+                  key={slug}
+                  href={`/category/${slug}`}
+                  className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 font-medium text-[var(--foreground)] transition-colors hover:border-[var(--primary)]/40 hover:text-[var(--primary)]"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <Link
+            href="/categories"
+            className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[var(--foreground)] transition-colors hover:text-[var(--primary)]"
+          >
+            Explore all moods <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+
+        <div className="lg:pl-3">
+          <TodaysShayari />
+        </div>
       </section>
 
-      {/* Categories */}
       <CategoryStrip />
 
       {/* Trending */}

@@ -49,11 +49,16 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
       try {
         await navigator.share({ title: shayari.title, text: shayari.excerpt, url });
       } catch {
-        /* cancelled */
+        return;
       }
     } else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copied");
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied");
+      } catch {
+        toast.error("Could not share this verse");
+        return;
+      }
     }
     api.post(`/shayari/${shayari._id}/share`).catch(() => {});
   };
@@ -95,6 +100,7 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
 
       <div className="mt-4 flex items-center gap-1 border-t border-[var(--border)] pt-4">
         <IconAction
+          label={liked ? "Remove like" : "Like this shayari"}
           onClick={() => optimistic(setLiked, liked, `/shayari/${shayari._id}/like`, (d) => setLikes((n) => n + d))}
           active={liked}
           activeClass="text-[var(--accent)]"
@@ -102,16 +108,17 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
           <Heart className={cn("h-4 w-4", liked && "fill-current")} /> {formatCount(likes)}
         </IconAction>
         <IconAction
+          label={bookmarked ? "Remove bookmark" : "Save to bookmarks"}
           onClick={() => optimistic(setBookmarked, bookmarked, `/shayari/${shayari._id}/bookmark`)}
           active={bookmarked}
           activeClass="text-[var(--primary)]"
         >
           <Bookmark className={cn("h-4 w-4", bookmarked && "fill-current")} />
         </IconAction>
-        <IconAction onClick={copy}>
+        <IconAction label={copied ? "Copied to clipboard" : "Copy shayari"} onClick={copy}>
           {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
         </IconAction>
-        <IconAction onClick={share}>
+        <IconAction label="Share shayari" onClick={share}>
           <Share2 className="h-4 w-4" />
         </IconAction>
       </div>
@@ -121,20 +128,26 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
 
 function IconAction({
   children,
+  label,
   onClick,
   active,
   activeClass,
 }: {
   children: React.ReactNode;
+  label: string;
   onClick: () => void;
   active?: boolean;
   activeClass?: string;
 }) {
   return (
     <button
+      type="button"
+      aria-label={label}
+      aria-pressed={active}
+      title={label}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface-2)] cursor-pointer",
+        "flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface-2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] cursor-pointer",
         active && activeClass
       )}
     >

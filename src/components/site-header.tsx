@@ -10,6 +10,7 @@ import {
   Sparkles,
   PenLine,
   Bookmark,
+  Search,
 } from "lucide-react";
 
 import { ThemeToggle } from "./theme-toggle";
@@ -47,7 +48,7 @@ export function SiteHeader() {
         scrolled ? "glass shadow-sm" : "bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl [background-image:var(--grad-1)] shadow-md">
@@ -60,7 +61,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="ml-2 hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="ml-2 hidden items-center gap-1 md:flex">
           {NAV.map((item) => {
             const active = pathname === item.href;
 
@@ -68,6 +69,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-medium transition-colors",
                   active
@@ -82,12 +84,19 @@ export function SiteHeader() {
         </nav>
 
         {/* Search */}
-        <div className="ml-auto max-w-xs flex-1 md:ml-auto">
+        <div className="ml-auto hidden w-full max-w-[19rem] flex-1 lg:block">
           <SearchBar />
         </div>
 
         {/* Right */}
         <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/search"
+            aria-label="Search shayari"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--foreground)] lg:hidden"
+          >
+            <Search className="h-5 w-5" />
+          </Link>
           {user && (
             <Link href="/write" className="hidden sm:block">
               <Button size="sm" variant="outline" className="gap-1.5">

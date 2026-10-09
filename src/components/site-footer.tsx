@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Feather, Globe, AtSign, Rss } from "lucide-react";
+import { ArrowRight, Feather } from "lucide-react";
 
 const COLUMNS = [
   { title: "Explore", links: [["Home", "/"], ["Trending", "/trending"], ["Categories", "/categories"], ["Search", "/search"]] },
@@ -10,7 +10,7 @@ const COLUMNS = [
 export function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-[var(--border)] bg-[var(--surface)]">
-      <div className="mx-auto max-w-6xl px-4 py-14">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <Link href="/" className="flex items-center gap-2">
@@ -24,17 +24,13 @@ export function SiteFooter() {
             <p className="mt-4 max-w-xs text-sm text-[var(--muted)]">
               Where words find their rhythm. A home for the finest shayari, poetry and verses across languages.
             </p>
-            <div className="mt-5 flex gap-3">
-              {[Globe, AtSign, Rss].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] text-[var(--muted)] transition-colors hover:text-[var(--primary)]"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
+            <Link
+              href="/categories"
+              className="group mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)]"
+            >
+              Browse the collection
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
 
           {COLUMNS.map((col) => (
