@@ -10,7 +10,7 @@ export function ShayariBrowseLayout({
   home?: boolean;
 }) {
   return (
-    <div className={`mx-auto  ${home ? "w-full" : "max-w-7xl"} px-4 pb-16`}>
+    <div className={`mx-auto  w-full px-4 pb-16`}>
       <div
         className={cn(
           "grid items-start gap-5",
