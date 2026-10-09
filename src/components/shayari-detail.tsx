@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -9,17 +9,27 @@ import { toast } from "sonner";
 import { shayariQueries } from "@/lib/queries";
 import { api } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ShayariGrid } from "@/components/shayari-grid";
 import { SectionHeading } from "@/components/section-heading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatCount, authorName } from "@/lib/utils";
+import type { Shayari } from "@/lib/types";
 
-export function ShayariDetail({ slug }: { slug: string }) {
-  const { data, isLoading } = useQuery(shayariQueries.bySlug(slug));
-  const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
+export function ShayariDetail({ slug, initialData }: { slug: string; initialData: { shayari: Shayari; related: Shayari[] } }) {
+  const { data, isLoading } = useQuery({
+    ...shayariQueries.bySlug(slug),
+    initialData,
+    staleTime: 0,
+    refetchOnMount: "always",
+  });
+  const [liked, setLiked] = useState(Boolean(initialData.shayari.isLiked));
+  const [bookmarked, setBookmarked] = useState(Boolean(initialData.shayari.isBookmarked));
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setLiked(Boolean(data?.shayari.isLiked));
+    setBookmarked(Boolean(data?.shayari.isBookmarked));
+  }, [data?.shayari.isLiked, data?.shayari.isBookmarked]);
 
   if (isLoading) {
     return (
@@ -100,12 +110,11 @@ export function ShayariDetail({ slug }: { slug: string }) {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="glass relative mt-8 overflow-hidden rounded-[calc(var(--radius)+0.5rem)] p-8 sm:p-12"
       >
-        <p className="shayari-body text-lg sm:text-xl">{s.content}</p>
+        <p lang={s.language?.code ?? "hi"} dir={s.language?.direction ?? "auto"} className="shayari-body text-lg sm:text-xl">{s.content}</p>
       </motion.div>
 
       {/* Action bar */}

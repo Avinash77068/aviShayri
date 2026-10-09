@@ -3,6 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { ShayariList } from "@/components/shayari-list";
 import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 import { buildKeywords } from "@/lib/seo";
+import { getShayariList } from "@/lib/server-data";
 
 export const metadata: Metadata = {
   title: "Latest Shayari",
@@ -12,12 +13,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/shayari" },
 };
 
-export default function ShayariIndexPage() {
+export default async function ShayariIndexPage() {
+  const { items, meta } = await getShayariList({}, 9);
   return (
     <>
       <PageHero emoji="📖" title="Latest Verses" subtitle="Fresh shayari across moods and languages." />
       <ShayariBrowseLayout>
-        <ShayariList />
+        <ShayariList initialItems={items} initialMeta={meta} />
       </ShayariBrowseLayout>
     </>
   );

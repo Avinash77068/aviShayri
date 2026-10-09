@@ -7,10 +7,11 @@ import { useQuery } from "@tanstack/react-query";
 import { categoryQueries } from "@/lib/queries";
 import { formatCount, cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Category } from "@/lib/types";
 
-export function CategorySidebar({ home = false }: { home?: boolean }) {
+export function CategorySidebar({ home = false, initialCategories }: { home?: boolean; initialCategories?: Category[] }) {
   const pathname = usePathname();
-  const { data: categories = [], isLoading } = useQuery(categoryQueries.all());
+  const { data: categories = [], isLoading } = useQuery({ ...categoryQueries.all(), initialData: initialCategories });
 
   return (
     <aside

@@ -7,9 +7,10 @@ import { Quote, ArrowUpRight, Sparkles } from "lucide-react";
 import { shayariQueries } from "@/lib/queries";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import type { Shayari } from "@/lib/types";
 
-export function TodaysShayari() {
-  const { data, isLoading } = useQuery(shayariQueries.todays());
+export function TodaysShayari({ initialShayari }: { initialShayari?: Shayari | null }) {
+  const { data, isLoading } = useQuery({ ...shayariQueries.todays(), initialData: initialShayari });
 
   if (isLoading) {
     return <Skeleton className="min-h-[390px] w-full rounded-[2rem] sm:min-h-[430px]" />;
@@ -18,7 +19,6 @@ export function TodaysShayari() {
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="relative isolate flex min-h-[390px] flex-col overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-7 shadow-[0_28px_80px_-40px_rgba(96,58,145,0.5)] sm:min-h-[430px] sm:p-9"
@@ -35,7 +35,7 @@ export function TodaysShayari() {
       </div>
 
       <Quote className="mt-9 h-8 w-8 text-[var(--primary)]/50" aria-hidden="true" />
-      <blockquote className="shayari-body mt-4 max-w-xl flex-1 text-xl font-medium leading-[1.9] sm:text-2xl sm:leading-[1.9]">
+      <blockquote lang={data.language?.code ?? "hi"} dir={data.language?.direction ?? "auto"} className="shayari-body mt-4 max-w-xl flex-1 text-xl font-medium leading-[1.9] sm:text-2xl sm:leading-[1.9]">
         {data.content}
       </blockquote>
 

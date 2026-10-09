@@ -1,30 +1,19 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ShayariDetail } from "@/components/shayari-detail";
-import { sampleShayari } from "@/lib/sample-data";
-import { API_BASE } from "@/lib/api";
-import { SITE_NAME, SITE_URL, buildKeywords } from "@/lib/seo";
-import type { Shayari } from "@/lib/types";
+import { SITE_NAME, SITE_URL, buildKeywords, serializeJsonLd } from "@/lib/seo";
+import { getShayariDetail } from "@/lib/server-data";
 
 type Params = Promise<{ slug: string }>;
 
-/** Fetch on the server for SEO; fall back to sample data if the API is down. */
-async function getShayari(slug: string): Promise<Shayari | null> {
-  try {
-    const res = await fetch(`${API_BASE}/shayari/${slug}`, { next: { revalidate: 300 } });
-    if (!res.ok) throw new Error("not ok");
-    const json = await res.json();
-    return json.data?.shayari ?? null;
-  } catch {
-    return sampleShayari.find((s) => s.slug === slug) ?? null;
-  }
-}
-
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const s = await getShayari(slug);
+  const data = await getShayariDetail(slug);
+  const s = data?.shayari;
   if (!s) return { title: "Shayari not found", robots: { index: false, follow: true } };
 
   const description = s.seoDescription || s.excerpt || s.content.slice(0, 160);
+  const image = s.featuredImage || "/opengraph-image";
   const author = s.author?.name || s.createdBy?.name;
   const tagNames = s.tags?.map((t) => t.name) ?? [];
   const categoryKeyword = s.category?.name ? `${s.category.name.toLowerCase()} shayari` : undefined;
@@ -45,18 +34,19 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       section: s.category?.name,
       tags: tagNames,
       authors: author ? [author] : undefined,
-      images: s.featuredImage ? [{ url: s.featuredImage }] : undefined,
+      images: [{ url: image, alt: s.title }],
     },
-    twitter: { card: "summary_large_image", title: s.title, description },
+    twitter: { card: "summary_large_image", title: s.title, description, images: [image] },
   };
 }
 
 export default async function ShayariDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const s = await getShayari(slug);
+  const data = await getShayariDetail(slug);
+  if (!data) notFound();
+  const s = data.shayari;
 
-  const jsonLd = s
-    ? {
+  const jsonLd = {
         "@context": "https://schema.org",
         "@graph": [
           {
@@ -95,15 +85,12 @@ export default async function ShayariDetailPage({ params }: { params: Params }) 
             ],
           },
         ],
-      }
-    : null;
+      };
 
   return (
     <>
-      {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      )}
-      <ShayariDetail slug={slug} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
+      <ShayariDetail slug={slug} initialData={data} />
     </>
   );
 }

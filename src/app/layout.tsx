@@ -13,6 +13,7 @@ import {
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
   SITE_KEYWORDS,
+  serializeJsonLd,
 } from "@/lib/seo";
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -50,11 +51,13 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     url: siteUrl,
     locale: "en_IN",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${SITE_NAME} — Hindi, Urdu and English shayari` }],
   },
   twitter: {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -119,7 +122,7 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(siteJsonLd) }}
         />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-VR3HJE41CZ"

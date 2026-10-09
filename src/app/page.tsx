@@ -5,13 +5,21 @@ import { TodaysShayari } from "@/components/todays-shayari";
 import { SearchBar } from "@/components/search-bar";
 import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 import { DEFAULT_DESCRIPTION } from "@/lib/seo";
+import { getFeaturedShayari, getLatestShayari, getTodaysShayari, getTrendingShayari } from "@/lib/server-data";
 
 export const metadata: Metadata = {
   description: DEFAULT_DESCRIPTION,
   alternates: { canonical: "/" },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [todaysShayari, trending, featured, latest] = await Promise.all([
+    getTodaysShayari(),
+    getTrendingShayari(6),
+    getFeaturedShayari(3),
+    getLatestShayari(6),
+  ]);
+
   return (
     <ShayariBrowseLayout home>
       <section className="grid  gap-10 py-10 sm:pt-8 lg:grid-cols-[1.02fr_.98fr] lg:gap-14 ">
@@ -40,7 +48,7 @@ export default function HomePage() {
         </div>
 
         <div className="lg:pl-3">
-          <TodaysShayari />
+          <TodaysShayari initialShayari={todaysShayari} />
         </div>
       </section>
 
@@ -51,6 +59,7 @@ export default function HomePage() {
         eyebrow="Most loved right now"
         title="Trending Shayari"
         href="/trending"
+        initialItems={trending}
       />
 
       {/* Featured */}
@@ -60,6 +69,7 @@ export default function HomePage() {
         eyebrow="Handpicked"
         title="Editor's Picks"
         href="/shayari"
+        initialItems={featured}
       />
 
       {/* Latest */}
@@ -69,6 +79,7 @@ export default function HomePage() {
         eyebrow="Fresh off the press"
         title="Latest Verses"
         href="/shayari"
+        initialItems={latest}
       />
     </ShayariBrowseLayout>
   );

@@ -65,7 +65,6 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.45, delay: Math.min(index * 0.05, 0.3) }}
@@ -83,7 +82,7 @@ export function ShayariCard({ shayari, index = 0 }: { shayari: Shayari; index?: 
       </div>
 
       <Link href={`/shayari/${shayari.slug}`} className="flex-1">
-        <p className="shayari-body text-[15px] text-[var(--foreground)] line-clamp-5">{shayari.content}</p>
+        <p lang={shayari.language?.code ?? "hi"} dir={shayari.language?.direction ?? "auto"} className="shayari-body text-[15px] text-[var(--foreground)] line-clamp-5">{shayari.content}</p>
       </Link>
 
       <div className="mt-5 flex items-center justify-between">

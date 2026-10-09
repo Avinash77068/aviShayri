@@ -1,11 +1,13 @@
 import axios, { AxiosError, AxiosHeaders } from "axios";
 import type { ApiEnvelope } from "./types";
+import { API_BASE } from "./api-config";
+
+export { API_BASE };
 
 /**
  * Axios instance pointed at the backend REST API. `withCredentials` sends the
  * HTTP-only auth cookies set by the backend.
  */
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1";
 const AUTH_TOKEN_STORAGE_KEY = "auth_access_token";
 const AUTH_TOKEN_COOKIE_NAME = "auth_access_token";
 

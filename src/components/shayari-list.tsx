@@ -6,18 +6,26 @@ import { Loader2 } from "lucide-react";
 import { api, unwrap } from "@/lib/api";
 import { ShayariGrid } from "./shayari-grid";
 import { Button } from "./ui/button";
-import type { Shayari } from "@/lib/types";
+import type { PageMeta, Shayari } from "@/lib/types";
 import { sampleShayari } from "@/lib/sample-data";
 
 interface Props {
   params?: Record<string, string>;
   emptyLabel?: string;
+  initialItems?: Shayari[];
+  initialMeta?: PageMeta;
 }
 
 const PAGE_SIZE = 9;
 
-export function ShayariList({ params = {} }: Props) {
+export function ShayariList({ params = {}, initialItems, initialMeta }: Props) {
   const sentinel = useRef<HTMLDivElement>(null);
+  const initialData = initialItems === undefined
+    ? undefined
+    : {
+        pages: [{ items: initialItems, nextPage: initialMeta?.hasNextPage ? 2 : undefined }],
+        pageParams: [1],
+      };
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["shayari", "infinite", params],
@@ -37,6 +45,7 @@ export function ShayariList({ params = {} }: Props) {
       }
     },
     getNextPageParam: (last) => last.nextPage,
+    initialData,
   });
 
   const items = data?.pages.flatMap((p) => p.items) ?? [];

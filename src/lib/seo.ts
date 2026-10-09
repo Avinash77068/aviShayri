@@ -6,7 +6,14 @@
 
 export const SITE_NAME = "Shayari";
 export const SITE_TAGLINE = "where words find their rhythm";
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const deploymentHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || deploymentHost;
+const normalizedSiteUrl = configuredSiteUrl
+  ? /^https?:\/\//i.test(configuredSiteUrl)
+    ? configuredSiteUrl
+    : `https://${configuredSiteUrl}`
+  : "http://localhost:3000";
+export const SITE_URL = normalizedSiteUrl.replace(/\/+$/, "");
 
 export const DEFAULT_TITLE = `${SITE_NAME} — ${SITE_TAGLINE}`;
 
@@ -15,12 +22,7 @@ export const DEFAULT_DESCRIPTION =
   "love, sad, attitude, romantic, motivational and dosti shayari. " +
   "Discover, bookmark and share the words that move you.";
 
-/**
- * A broad, intent-rich keyword set: the real high-volume search queries people
- * type, in English + Roman-Hindi + native Devanagari. (Google ignores the
- * keywords meta tag, but Bing and several regional engines still read it, and
- * these terms double as our content/heading vocabulary.)
- */
+/** Shared search vocabulary in English, Roman Hindi and Devanagari. */
 export const SITE_KEYWORDS = [
   "shayari",
   "hindi shayari",
@@ -55,4 +57,12 @@ export function buildKeywords(extra: string[] = []): string[] {
 /** Absolute canonical URL for a given path (path should start with "/"). */
 export function canonical(path = "/"): string {
   return new URL(path, SITE_URL).toString();
+}
+
+/** Escape script-closing characters before embedding JSON-LD in HTML. */
+export function serializeJsonLd(value: unknown): string {
+  return (JSON.stringify(value) ?? "null")
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 }

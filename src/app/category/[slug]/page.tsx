@@ -2,37 +2,19 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { ShayariList } from "@/components/shayari-list";
 import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
-import { sampleCategories } from "@/lib/sample-data";
-import { API_BASE } from "@/lib/api";
-import { SITE_NAME, SITE_URL, buildKeywords } from "@/lib/seo";
-import type { Category } from "@/lib/types";
+import { SITE_NAME, SITE_URL, buildKeywords, serializeJsonLd } from "@/lib/seo";
+import { getCategoryBySlug, getShayariList } from "@/lib/server-data";
+import { notFound } from "next/navigation";
 
 type Params = Promise<{ slug: string }>;
 
-const titleCase = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-
-/** Resolve a category from the API, falling back to bundled sample data. */
-async function getCategory(slug: string): Promise<Category | null> {
-  try {
-    const res = await fetch(`${API_BASE}/categories/all`, { next: { revalidate: 3600 } });
-    if (res.ok) {
-      const json = await res.json();
-      const list: Category[] = json.data ?? [];
-      const found = list.find((c) => c.slug === slug);
-      if (found) return found;
-    }
-  } catch {
-    /* fall through to sample data */
-  }
-  return sampleCategories.find((c) => c.slug === slug) ?? null;
-}
-
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const cat = await getCategory(slug);
-  const name = cat?.name ?? titleCase(slug);
+  const cat = await getCategoryBySlug(slug);
+  if (!cat) return { title: "Category not found", robots: { index: false, follow: true } };
+  const name = cat.name;
   const description =
-    cat?.description ||
+    cat.description ||
     `Read the best ${name.toLowerCase()} shayari — heart-touching ${name.toLowerCase()} poetry and 2 line verses in Hindi, Urdu and English.`;
 
   return {
@@ -50,20 +32,22 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       title: `${name} Shayari`,
       description,
       url: `${SITE_URL}/category/${slug}`,
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${name} Shayari` }],
     },
   };
 }
 
 export default async function CategoryPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const cat = await getCategory(slug);
-  const name = cat?.name ?? titleCase(slug);
+  const [cat, list] = await Promise.all([getCategoryBySlug(slug), getShayariList({ category: slug }, 9)]);
+  if (!cat) notFound();
+  const name = cat.name;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: `${name} Shayari`,
-    description: cat?.description || `The best ${name.toLowerCase()} shayari collection.`,
+    description: cat.description || `The best ${name.toLowerCase()} shayari collection.`,
     url: `${SITE_URL}/category/${slug}`,
     isPartOf: { "@id": `${SITE_URL}/#website` },
     breadcrumb: {
@@ -78,14 +62,14 @@ export default async function CategoryPage({ params }: { params: Params }) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
       <PageHero
-        emoji={cat?.icon ?? "🏷️"}
+        emoji={cat.icon ?? "🏷️"}
         title={`${name} Shayari`}
-        subtitle={cat?.description ?? `Verses that capture the feeling of ${name.toLowerCase()}.`}
+        subtitle={cat.description ?? `Verses that capture the feeling of ${name.toLowerCase()}.`}
       />
       <ShayariBrowseLayout>
-        <ShayariList params={{ category: slug }} />
+        <ShayariList params={{ category: slug }} initialItems={list.items} initialMeta={list.meta} />
       </ShayariBrowseLayout>
     </>
   );

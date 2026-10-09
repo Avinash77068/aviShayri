@@ -8,9 +8,10 @@ import { SectionHeading } from "./section-heading";
 import { categoryQueries } from "@/lib/queries";
 import { formatCount } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Category } from "@/lib/types";
 
-export function CategoryStrip() {
-  const { data: categories, isLoading } = useQuery(categoryQueries.all());
+export function CategoryStrip({ initialCategories }: { initialCategories?: Category[] }) {
+  const { data: categories, isLoading } = useQuery({ ...categoryQueries.all(), initialData: initialCategories });
 
   // Hide the whole section (heading included) when there are no categories.
   if (!isLoading && (!categories || categories.length === 0)) return null;
@@ -35,7 +36,6 @@ export function CategoryStrip() {
           {(categories ?? []).map((c, i) => (
             <motion.div
               key={c._id}
-              initial={{ opacity: 0, scale: 0.94 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.35, delay: i * 0.04 }}

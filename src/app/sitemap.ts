@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { API_BASE } from "@/lib/api";
+import { API_BASE } from "@/lib/api-config";
 import { SITE_URL } from "@/lib/seo";
 import { sampleCategories } from "@/lib/sample-data";
 import type { Shayari, Category } from "@/lib/types";
@@ -74,10 +74,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((s) => s?.slug)
     .map((s) => ({
       url: url(`/shayari/${s.slug}`),
-      lastModified: s.publishedAt || s.createdAt ? new Date(s.publishedAt || s.createdAt!) : now,
+      lastModified: validDate(s.publishedAt || s.createdAt) ?? now,
       changeFrequency: "monthly",
       priority: 0.7,
     }));
 
   return [...staticRoutes, ...categoryRoutes, ...shayariRoutes];
+}
+
+function validDate(value?: string) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
 }

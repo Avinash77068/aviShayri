@@ -14,12 +14,14 @@ export function QuerySection({
   eyebrow,
   title,
   href,
+  initialItems,
 }: {
   kind: Kind;
   limit?: number;
   eyebrow?: string;
   title?: string;
   href?: string;
+  initialItems?: Shayari[];
 }) {
   const query: { queryKey: QueryKey; queryFn: () => Promise<Shayari[]> } =
     kind === "trending"
@@ -28,7 +30,7 @@ export function QuerySection({
         ? shayariQueries.featured(limit)
         : shayariQueries.latest(limit);
 
-  const { data, isLoading } = useQuery(query);
+  const { data, isLoading } = useQuery({ ...query, initialData: initialItems });
 
   // Hide the whole section (heading included) when there's no data.
   if (!isLoading && (!data || data.length === 0)) return null;

@@ -3,9 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { shayariQueries } from "@/lib/queries";
 import { ShayariGrid } from "./shayari-grid";
+import type { PageMeta, Shayari } from "@/lib/types";
 
-export function SearchResults({ q }: { q: string }) {
-  const { data, isLoading } = useQuery({ ...shayariQueries.search(q), enabled: q.length >= 1 });
+export function SearchResults({ q, initialItems, initialMeta }: { q: string; initialItems?: Shayari[]; initialMeta?: PageMeta }) {
+  const { data, isLoading } = useQuery({
+    ...shayariQueries.search(q),
+    enabled: q.length >= 1,
+    initialData: initialItems === undefined ? undefined : { items: initialItems, meta: initialMeta },
+  });
   const items = data?.items ?? [];
 
   if (!q) {
