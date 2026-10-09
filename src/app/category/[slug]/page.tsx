@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { ShayariList } from "@/components/shayari-list";
+import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 import { sampleCategories } from "@/lib/sample-data";
 import { API_BASE } from "@/lib/api";
 import { SITE_NAME, SITE_URL, buildKeywords } from "@/lib/seo";
@@ -83,9 +84,9 @@ export default async function CategoryPage({ params }: { params: Params }) {
         title={`${name} Shayari`}
         subtitle={cat?.description ?? `Verses that capture the feeling of ${name.toLowerCase()}.`}
       />
-      <div className="mx-auto max-w-6xl px-4 pb-16">
+      <ShayariBrowseLayout>
         <ShayariList params={{ category: slug }} />
-      </div>
+      </ShayariBrowseLayout>
     </>
   );
 }

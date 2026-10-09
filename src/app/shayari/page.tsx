@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { ShayariList } from "@/components/shayari-list";
+import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 import { buildKeywords } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -15,9 +16,9 @@ export default function ShayariIndexPage() {
   return (
     <>
       <PageHero emoji="📖" title="Latest Verses" subtitle="Fresh shayari across moods and languages." />
-      <div className="mx-auto max-w-6xl px-4 pb-16">
+      <ShayariBrowseLayout>
         <ShayariList />
-      </div>
+      </ShayariBrowseLayout>
     </>
   );
 }

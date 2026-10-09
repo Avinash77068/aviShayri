@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { SearchResults } from "@/components/search-results";
 import { SearchBar } from "@/components/search-bar";
+import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -20,9 +21,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
         <SearchBar prominent initialQuery={q.trim()} />
         <p className="mt-3 text-center text-xs text-[var(--muted)]">Search by a feeling, a phrase, or a poet&apos;s name.</p>
       </div>
-      <div className="mx-auto max-w-6xl px-4 pb-16">
+      <ShayariBrowseLayout>
         <SearchResults q={q.trim()} />
-      </div>
+      </ShayariBrowseLayout>
     </>
   );
 }

@@ -21,7 +21,6 @@ const NAV = [
   { href: "/", label: "Home" },
   { href: "/shayari", label: "Latest" },
   { href: "/trending", label: "Trending" },
-  { href: "/categories", label: "Categories" },
 ];
 
 export function SiteHeader() {
@@ -63,7 +62,7 @@ export function SiteHeader() {
           {NAV.map((item) => {
             const active = item.href === "/"
               ? pathname === "/"
-              : pathname.startsWith(item.href) || (item.href === "/categories" && pathname.startsWith("/category/"));
+              : pathname.startsWith(item.href);
 
             return (
               <Link

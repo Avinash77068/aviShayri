@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { QuerySection } from "@/components/query-section";
-import { CategoryStrip } from "@/components/category-strip";
 import { TodaysShayari } from "@/components/todays-shayari";
 import { SearchBar } from "@/components/search-bar";
+import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 import { DEFAULT_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6">
-      <section className="grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[1.02fr_.98fr] lg:gap-14 lg:py-16">
+    <ShayariBrowseLayout home>
+      <section className="grid items-center gap-10 py-10 sm:pt-8 lg:grid-cols-[1.02fr_.98fr] lg:gap-14 ">
         <div className="max-w-2xl">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--primary)] shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full [background-image:var(--grad-1)]" />
@@ -29,23 +29,6 @@ export default function HomePage() {
 
           <div className="mt-8 max-w-xl">
             <SearchBar className="max-w-none" prominent />
-            <div className="mt-3 flex flex-wrap  items-center gap-2 text-xs text-[var(--muted)]">
-              <span className="mr-1">Try a mood</span>
-              {[
-                ["Love", "love"],
-                ["Heartbreak", "sad"],
-                ["Life", "life"],
-                ["Motivation", "motivational"],
-              ].map(([label, slug]) => (
-                <Link
-                  key={slug}
-                  href={`/category/${slug}`}
-                  className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 font-medium text-[var(--foreground)] transition-colors hover:border-[var(--primary)]/40 hover:text-[var(--primary)]"
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
           </div>
 
           <Link
@@ -60,8 +43,6 @@ export default function HomePage() {
           <TodaysShayari />
         </div>
       </section>
-
-      <CategoryStrip />
 
       {/* Trending */}
       <QuerySection
@@ -89,6 +70,6 @@ export default function HomePage() {
         title="Latest Verses"
         href="/shayari"
       />
-    </div>
+    </ShayariBrowseLayout>
   );
 }

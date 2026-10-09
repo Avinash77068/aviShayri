@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   Sparkles,
   TrendingUp,
-  Grid3x3,
   PenLine,
   User as UserIcon,
   LogIn,
@@ -19,7 +18,6 @@ const TABS = [
   { href: "/", label: "Home", icon: Sparkles },
   { href: "/shayari", label: "Latest", icon: Clock },
   { href: "/trending", label: "Trending", icon: TrendingUp },
-  { href: "/categories", label: "Categories", icon: Grid3x3 },
 ];
 
 export function MobileBottomBar() {
@@ -29,7 +27,7 @@ export function MobileBottomBar() {
   const isActive = (href: string) =>
     href === "/"
       ? pathname === "/"
-      : pathname.startsWith(href) || (href === "/categories" && pathname.startsWith("/category/"));
+      : pathname.startsWith(href);
 
   return (
     <nav

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BookmarksView } from "@/components/bookmarks-view";
+import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 
 export const metadata: Metadata = {
   title: "Bookmarks",
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function BookmarksPage() {
-  return <BookmarksView />;
+  return (
+    <ShayariBrowseLayout>
+      <BookmarksView />
+    </ShayariBrowseLayout>
+  );
 }
