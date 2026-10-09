@@ -50,7 +50,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const items = NAV.filter((n) => !n.adminOnly || user.role === "admin");
 
   return (
-    <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[220px_1fr]">
+    <div className="mx-auto grid  gap-6 px-4 py-8 md:grid-cols-[220px_1fr]">
       <aside className="md:sticky md:top-20 md:self-start">
         <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] p-3">
           <div className="mb-2 flex items-center justify-between px-3 py-2">

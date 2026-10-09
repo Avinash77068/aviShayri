@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2, Eye, ExternalLink, PenLine, Loader2 } from "lucide-react";
+import { Trash2, Eye, ExternalLink, PenLine, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { api, unwrap } from "@/lib/api";
 import { AdminPageHeader } from "./admin-page-header";
@@ -11,23 +11,32 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCount } from "@/lib/utils";
-import type { Shayari } from "@/lib/types";
+import type { PageMeta, Shayari } from "@/lib/types";
 
-const STATUS_TABS = ["all", "published", "draft"] as const;
+const STATUS_TABS = ["all", "pending", "published", "draft"] as const;
+const PAGE_SIZE = 10;
 
 export function ManageShayari() {
   const qc = useQueryClient();
   const [status, setStatus] = useState<(typeof STATUS_TABS)[number]>("all");
+  const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin", "shayari", status],
-    queryFn: async (): Promise<Shayari[]> => {
-      const params: Record<string, string> = { admin: "true", limit: "100" };
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["admin", "shayari", status, page],
+    queryFn: async (): Promise<{ items: Shayari[]; meta?: PageMeta }> => {
+      const params: Record<string, string> = { admin: "true", limit: String(PAGE_SIZE), page: String(page) };
       if (status !== "all") params.status = status;
-      const { data: items } = await unwrap<Shayari[]>(api.get("/shayari", { params }));
-      return items;
+      const { data: items, meta } = await unwrap<Shayari[]>(api.get("/shayari", { params }));
+      return { items, meta };
     },
   });
+  const items = data?.items ?? [];
+  const meta = data?.meta;
+  const totalPages = meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    if (meta && page > meta.totalPages) setPage(meta.totalPages);
+  }, [meta, page]);
 
   const remove = useMutation({
     mutationFn: (id: string) => api.delete(`/shayari/${id}`),
@@ -62,11 +71,15 @@ export function ManageShayari() {
         }
       />
 
-      <div className="mb-4 flex gap-1">
+      <div role="group" aria-label="Filter verses by status" className="mb-4 flex flex-wrap gap-1">
         {STATUS_TABS.map((s) => (
           <button
             key={s}
-            onClick={() => setStatus(s)}
+            onClick={() => {
+              setStatus(s);
+              setPage(1);
+            }}
+            aria-pressed={status === s}
             className={`rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors ${
               status === s ? "bg-[var(--surface-2)] text-[var(--foreground)]" : "text-[var(--muted)] hover:text-[var(--foreground)]"
             }`}
@@ -83,7 +96,7 @@ export function ManageShayari() {
               <Skeleton key={i} className="h-12" />
             ))}
           </div>
-        ) : !data?.length ? (
+        ) : !items.length ? (
           <p className="p-10 text-center text-sm text-[var(--muted)]">No shayari found.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -98,7 +111,7 @@ export function ManageShayari() {
                 </tr>
               </thead>
               <tbody>
-                {data.map((s) => (
+                {items.map((s) => (
                   <tr key={s._id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-2)]/50">
                     <td className="max-w-xs px-4 py-3">
                       <p className="truncate font-medium">{s.title}</p>
@@ -144,6 +157,39 @@ export function ManageShayari() {
           </div>
         )}
       </div>
+
+      {meta && meta.total > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-[var(--muted)]">
+            Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, meta.total)} of {formatCount(meta.total)} verses
+          </p>
+          <nav aria-label="Shayari pagination" className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              aria-label="Previous page"
+              disabled={page <= 1 || isFetching}
+              onClick={() => setPage((current) => current - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="min-w-24 text-center text-sm text-[var(--muted)]" aria-live="polite">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              aria-label="Next page"
+              disabled={page >= totalPages || isFetching}
+              onClick={() => setPage((current) => current + 1)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </nav>
+        </div>
+      )}
     </div>
   );
 }
