@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <ShayariBrowseLayout home>
-      <section className="grid items-center gap-10 py-10 sm:pt-8 lg:grid-cols-[1.02fr_.98fr] lg:gap-14 ">
+      <section className="grid  gap-10 py-10 sm:pt-8 lg:grid-cols-[1.02fr_.98fr] lg:gap-14 ">
         <div className="max-w-2xl">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--primary)] shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full [background-image:var(--grad-1)]" />
