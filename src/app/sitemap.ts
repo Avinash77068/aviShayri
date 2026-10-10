@@ -56,6 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/trending"), lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { url: url("/categories"), lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: url("/terms"), lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: url("/privacy"), lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const [shayariList, categories] = await Promise.all([
