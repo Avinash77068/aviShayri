@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Feather, ScrollText } from "lucide-react";
+import { breadcrumbJsonLd, pageSocialMetadata, serializeJsonLd } from "@/lib/seo";
+
+const description =
+  "Read the terms that apply when you browse Shayari, create an account, or share your poetry with the community.";
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  ...breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Terms of Service", path: "/terms" },
+  ])!,
+};
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description:
-    "Read the terms that apply when you browse Shayari, create an account, or share your poetry with the community.",
+  description,
   alternates: { canonical: "/terms" },
+  ...pageSocialMetadata({ title: "Terms of Service", description, path: "/terms" }),
 };
 
 const sections = [
@@ -28,6 +39,7 @@ const paragraphClass = "mt-3 leading-7 text-[var(--muted)]";
 export default function TermsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbData) }} />
       <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[var(--muted)]">
         <Link href="/" className="transition-colors hover:text-[var(--foreground)]">
           Home

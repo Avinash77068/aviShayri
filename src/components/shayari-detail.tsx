@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Heart, Bookmark, Share2, Copy, Check, Eye, Clock, ArrowLeft } from "lucide-react";
+import { Heart, Bookmark, Share2, Copy, Check, Eye, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { shayariQueries } from "@/lib/queries";
 import { api } from "@/lib/api";
@@ -74,13 +74,6 @@ export function ShayariDetail({ slug, initialData }: { slug: string; initialData
 
   return (
     <article className="mx-auto max-w-3xl px-4 pt-10">
-      <Link
-        href="/shayari"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to all verses
-      </Link>
-
       <div className="mb-5 flex flex-wrap items-center gap-2">
         {s.category && (
           <Link href={`/category/${s.category.slug}`}>

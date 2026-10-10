@@ -2,20 +2,23 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { ShayariList } from "@/components/shayari-list";
 import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
-import { SITE_NAME, SITE_URL, buildKeywords, serializeJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { buildKeywords, collectionJsonLd, pageSocialMetadata, serializeJsonLd, SITE_NAME } from "@/lib/seo";
 import { getCategoryBySlug, getShayariList } from "@/lib/server-data";
 import { notFound } from "next/navigation";
 
 type Params = Promise<{ slug: string }>;
+
+function categoryDescription(name: string, description?: string) {
+  return description || `Read ${name.toLowerCase()} shayari and poems in Hindi, Urdu, and English.`;
+}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const cat = await getCategoryBySlug(slug);
   if (!cat) return { title: "Category not found", robots: { index: false, follow: true } };
   const name = cat.name;
-  const description =
-    cat.description ||
-    `Read the best ${name.toLowerCase()} shayari — heart-touching ${name.toLowerCase()} poetry and 2 line verses in Hindi, Urdu and English.`;
+  const description = categoryDescription(name, cat.description);
 
   return {
     title: `${name} Shayari`,
@@ -27,13 +30,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       `2 line ${name.toLowerCase()} shayari`,
     ]),
     alternates: { canonical: `/category/${slug}` },
-    openGraph: {
-      type: "website",
-      title: `${name} Shayari`,
-      description,
-      url: `${SITE_URL}/category/${slug}`,
-      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${name} Shayari` }],
-    },
+    ...pageSocialMetadata({ title: `${name} Shayari`, description, path: `/category/${slug}` }),
   };
 }
 
@@ -43,30 +40,31 @@ export default async function CategoryPage({ params }: { params: Params }) {
   if (!cat) notFound();
   const name = cat.name;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
+  const description = categoryDescription(name, cat.description);
+  const jsonLd = collectionJsonLd({
     name: `${name} Shayari`,
-    description: cat.description || `The best ${name.toLowerCase()} shayari collection.`,
-    url: `${SITE_URL}/category/${slug}`,
-    isPartOf: { "@id": `${SITE_URL}/#website` },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: SITE_NAME, item: SITE_URL },
-        { "@type": "ListItem", position: 2, name: "Categories", item: `${SITE_URL}/categories` },
-        { "@type": "ListItem", position: 3, name, item: `${SITE_URL}/category/${slug}` },
-      ],
-    },
-  };
+    description,
+    path: `/category/${slug}`,
+    items: list.items.map((item) => ({ name: item.title, path: `/shayari/${item.slug}` })),
+    breadcrumbs: [
+      { name: SITE_NAME, path: "/" },
+      { name: "Categories", path: "/categories" },
+      { name: `${name} Shayari`, path: `/category/${slug}` },
+    ],
+  });
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
+      <Breadcrumbs items={[
+        { name: SITE_NAME, path: "/" },
+        { name: "Categories", path: "/categories" },
+        { name: `${name} Shayari`, path: `/category/${slug}` },
+      ]} />
       <PageHero
         emoji={cat.icon ?? "🏷️"}
         title={`${name} Shayari`}
-        subtitle={cat.description ?? `Verses that capture the feeling of ${name.toLowerCase()}.`}
+        subtitle={description}
       />
       <ShayariBrowseLayout>
         <ShayariList params={{ category: slug }} initialItems={list.items} initialMeta={list.meta} />

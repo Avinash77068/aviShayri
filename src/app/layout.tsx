@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/site-footer";
 import {
   SITE_NAME,
   SITE_URL,
+  canonical,
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
   SITE_KEYWORDS,
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    url: siteUrl,
+    url: canonical("/"),
     locale: "en_IN",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${SITE_NAME} — Hindi, Urdu and English shayari` }],
   },
@@ -79,33 +80,24 @@ export const viewport: Viewport = {
   ],
 };
 
-// Site-wide structured data: identifies the site + brand and enables the
-// Google sitelinks search box.
+// Site-wide structured data identifies the website and its publisher.
 const siteJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
-      url: siteUrl,
+      url: canonical("/"),
       name: SITE_NAME,
       description: DEFAULT_DESCRIPTION,
       inLanguage: ["hi", "ur", "en"],
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: `${siteUrl}/search?q={search_term_string}`,
-        },
-        "query-input": "required name=search_term_string",
-      },
     },
     {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
       name: SITE_NAME,
-      url: siteUrl,
-      logo: `${siteUrl}/icon.svg`,
+      url: canonical("/"),
+      description: DEFAULT_DESCRIPTION,
     },
   ],
 };

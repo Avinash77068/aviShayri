@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Feather, ShieldCheck } from "lucide-react";
+import { breadcrumbJsonLd, pageSocialMetadata, serializeJsonLd } from "@/lib/seo";
+
+const description =
+  "Learn what information Shayari uses, why it is needed, and the choices you have when using the website.";
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  ...breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Privacy Policy", path: "/privacy" },
+  ])!,
+};
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description:
-    "Learn what information Shayari uses, why it is needed, and the choices you have when using the website.",
+  description,
   alternates: { canonical: "/privacy" },
+  ...pageSocialMetadata({ title: "Privacy Policy", description, path: "/privacy" }),
 };
 
 const sections = [
@@ -29,6 +40,7 @@ const listClass = "mt-3 list-disc space-y-2 pl-5 leading-7 text-[var(--muted)] m
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbData) }} />
       <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[var(--muted)]">
         <Link href="/" className="transition-colors hover:text-[var(--foreground)]">
           Home
