@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ShayariDetail } from "@/components/shayari-detail";
+import { keywordsForTopic } from "@/lib/keywords";
 import { breadcrumbJsonLd, buildKeywords, canonical, SITE_NAME, serializeJsonLd } from "@/lib/seo";
 import { getShayariDetail } from "@/lib/server-data";
 
@@ -26,7 +27,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: s.seoTitle || s.title,
     description,
-    keywords: buildKeywords([...tagNames, ...(categoryKeyword ? [categoryKeyword] : [])]),
+    keywords: buildKeywords([
+      ...tagNames,
+      ...(s.category?.name ? keywordsForTopic(s.category.name, 6) : []),
+      ...(categoryKeyword ? [categoryKeyword] : []),
+    ]),
     alternates: { canonical: `/shayari/${s.slug}` },
     openGraph: {
       type: "article",

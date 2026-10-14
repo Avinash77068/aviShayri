@@ -4,6 +4,7 @@ import { ShayariList } from "@/components/shayari-list";
 import { ShayariBrowseLayout } from "@/components/shayari-browse-layout";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { buildKeywords, collectionJsonLd, pageSocialMetadata, serializeJsonLd, SITE_NAME } from "@/lib/seo";
+import { keywordsForTopic } from "@/lib/keywords";
 import { getCategoryBySlug, getShayariList } from "@/lib/server-data";
 import { notFound } from "next/navigation";
 
@@ -24,10 +25,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: `${name} Shayari`,
     description,
     keywords: buildKeywords([
-      `${name.toLowerCase()} shayari`,
-      `${name.toLowerCase()} shayari in hindi`,
+      ...keywordsForTopic(name),
       `${name.toLowerCase()} poetry`,
-      `2 line ${name.toLowerCase()} shayari`,
     ]),
     alternates: { canonical: `/category/${slug}` },
     ...pageSocialMetadata({ title: `${name} Shayari`, description, path: `/category/${slug}` }),

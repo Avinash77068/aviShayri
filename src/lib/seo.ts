@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { topVerifiedKeywords } from "./keywords";
 
 /**
  * Central SEO configuration. Keeping site-wide constants here keeps titles,
@@ -20,6 +21,7 @@ export const DEFAULT_DESCRIPTION =
 /** Shared search vocabulary in English, Roman Hindi and Devanagari. */
 export const SITE_KEYWORDS = [
   "shayari",
+  ...topVerifiedKeywords(10),
   "hindi shayari",
   "shayari in hindi",
   "love shayari",
